@@ -11,7 +11,8 @@ pub struct Interpreter
     sound_timer: Option<u8>,
     op_code: Option<u16>,
     keypad: Option<[bool; 16]>,
-    debug: Option<bool>
+    debug: Option<bool>,
+    skip_inc: Option<bool>
 }
 
 impl Interpreter
@@ -33,6 +34,7 @@ impl Interpreter
             op_code: Some(0x0000),
             keypad: Some([false; 16]),
             debug: Some(true),
+            skip_inc: Some(false),
         }
     }
 }

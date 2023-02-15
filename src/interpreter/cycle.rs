@@ -50,10 +50,32 @@ impl Interpreter
             0x7000 => self.add_vx_reg(),
             // 0x9XY0
             0x9000 => self.skip_if_vx_neq_vy(),
-            // 0xANNN: set I to NNN
+            // 0xANNN: Set I to NNN
             0xA000 => self.set_idx_reg(),
-            // 0xDXYN: draw
+            // 0xDXYN: Draw
             0xD000 => self.draw(),
+            0xF000 =>
+            {
+                // Last 8 bits
+                match self.get_op_code() & 0x00FF
+                {
+                    // 0xFX07: Set VX to current value of delay timer
+                    0x0007 => self.set_vx_to_delay(),
+                    // 0xFX15: Set delay timer to current value in vx
+                    0x0015 => self.set_delay_to_vx(),
+                    // 0xFX18:
+                    0x0018 => self.set_sound_to_vx(),
+                    // 0xFX1E:
+                    0x001E => self.add_vx_to_i(),
+                    // 0xFX0A:
+                    0x000A => self.get_key(),
+                    // 0xFX29:
+                    0x0029 => self.font_char(),
+                    // 0xFX33:
+                    0x0033 => self.bin_decimal_conversion(),
+                    _ => self.unknown_op_code(),
+                }
+            }
             _ => self.unknown_op_code(),
         }
     }

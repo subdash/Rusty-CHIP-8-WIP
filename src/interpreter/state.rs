@@ -42,6 +42,11 @@ impl Interpreter
         self.stack.unwrap()[self.get_sp()]
     }
 
+    pub fn get_stack(&mut self) -> [u16; 16]
+    {
+        self.stack.unwrap()
+    }
+
     pub fn get_sp(&self) -> usize
     {
         self.sp.unwrap()
@@ -139,8 +144,21 @@ impl Interpreter
 
     pub fn next_instruction(&mut self)
     {
-        let current_pc = self.get_pc();
-        self.set_pc(current_pc + 2);
+        if let Some(skip_inc) = self.skip_inc
+        {
+            let current_pc = self.get_pc();
+            if skip_inc == false
+            {
+                self.debug_log(format!("PC: {:#06x} -> {:#06x}", current_pc, current_pc + 2));
+                self.set_pc(current_pc + 2);
+            }
+            else
+            {
+                self.skip_inc = Some(false);
+                self.debug_log(format!("PC: {:#06x}", current_pc));
+            }
+        }
+        
     }
     ///
     /// Timers
@@ -156,6 +174,7 @@ impl Interpreter
         if current_value == 0
         {
             self.set_delay_timer(59);
+            return;
         }
         self.set_delay_timer(current_value - 1);
     }
@@ -172,6 +191,7 @@ impl Interpreter
         {
             // TODO: play beep sound
             self.set_sound_timer(59);
+            return;
         }
         self.set_sound_timer(current_value - 1);
     }

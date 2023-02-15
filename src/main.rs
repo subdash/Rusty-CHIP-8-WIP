@@ -10,7 +10,7 @@ fn main()
     let mut interpreter = Interpreter::new();
     interpreter.initialize();
 
-    let refresh_millis = if interpreter.is_debug() { 100 } else { 16 };
+    let refresh_millis = if interpreter.is_debug() { 10 } else { 16 };
     let refresh_interval = time::Duration::from_millis(refresh_millis);
 
     loop
