@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 device_query = "0.2.8"
+cursive = "0.20"

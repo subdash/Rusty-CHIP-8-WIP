@@ -9,11 +9,10 @@ impl Interpreter
 
     pub fn debug_log(&mut self, msg: String)
     {
-        if !self.is_debug()
+        if self.is_debug()
         {
-            return;
+            println!("{}", msg);
         }
-        println!("{}", msg);
     }
 
     pub fn log_globals(&mut self)
@@ -26,13 +25,11 @@ impl Interpreter
         let v_string = self.v_string();
         let stack_string = self.stack_string();
         let pc = self.get_pc();
-        println!();
-        self.debug_log(format!("OP_CODE: {:#06x}", op_code));
+        self.debug_log(format!("\nOP_CODE: {:#06x}", op_code));
         self.debug_log(format!("I_REG:   {:#06x}", i));
         self.debug_log(format!("PC:      {:#06x}", pc));
         self.debug_log(format!("{stack_string}"));
-        self.debug_log(format!("{v_string}"));
-        println!();
+        self.debug_log(format!("{v_string}\n"));
     }
 
     pub fn stack_string(&mut self) -> String

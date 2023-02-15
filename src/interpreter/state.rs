@@ -9,6 +9,18 @@ use super::Interpreter;
 
 impl Interpreter
 {
+    /*
+        Todo: Possibly move draw flag and draw flag functions
+    */
+    pub fn set_draw_flag(&mut self, val: bool)
+    {
+        self.draw_flag = Some(val);
+    }
+
+    pub fn get_draw_flag(&self) -> bool
+    {
+        self.draw_flag.unwrap()
+    }
     ///
     /// OPCODE
     ///

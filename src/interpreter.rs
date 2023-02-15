@@ -12,7 +12,8 @@ pub struct Interpreter
     op_code: Option<u16>,
     keypad: Option<[bool; 16]>,
     debug: Option<bool>,
-    skip_inc: Option<bool>
+    skip_inc: Option<bool>,
+    draw_flag: Option<bool>
 }
 
 impl Interpreter
@@ -33,8 +34,12 @@ impl Interpreter
             sound_timer: Some(0x3c), // 60
             op_code: Some(0x0000),
             keypad: Some([false; 16]),
-            debug: Some(true),
+            /*
+                TODO: read debug flag from cmd line args, use that value here
+            */
+            debug: Some(false), // set to true when debugging
             skip_inc: Some(false),
+            draw_flag: Some(false),
         }
     }
 }

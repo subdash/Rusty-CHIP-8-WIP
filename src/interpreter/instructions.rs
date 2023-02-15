@@ -6,11 +6,11 @@ impl Interpreter
     pub fn clear_display(&mut self)
     {
         self.debug_log(format!("CALL:   clear_display"));
-        if self.is_debug()
+        self.set_draw_flag(true);
+        for n in 0..2048
         {
-            return;
+            self.set_graphics_at_address(n, 0);
         }
-        print!("{}[2J", 27 as char);
     }
 
     /// 0x00EE: return from subroutine
@@ -28,7 +28,7 @@ impl Interpreter
         let address = self.get_op_code() & 0x0FFF;
         // NOT working since PC gets incremented after jump
         self.debug_log(format!("Setting program counter to {:#06x}", address));
-        if (address == self.get_pc())
+        if address == self.get_pc()
         {
             self.debug_log(format!("Infinite jump"))
         }
@@ -146,18 +146,18 @@ impl Interpreter
     /// 0xDXYN: draw n rows at coordinates in vx/vy
     pub fn draw(&mut self)
     {
+        self.set_draw_flag(true);
         let x_reg: usize = ((self.get_op_code() & 0x0F00) >> 8).try_into().unwrap();
         let y_reg: usize = ((self.get_op_code() & 0x00F0) >> 4).try_into().unwrap();
         // Set x and y coordinates to values in VX/VY
         let x: u16 = (self.get_v_reg(x_reg) & 63).try_into().unwrap();
         let y: u16 = (self.get_v_reg(y_reg) & 31).try_into().unwrap();
         // Sprite height (n rows to draw)
-        let n = self.get_op_code() & 0x000F;
+        let sprite_height = self.get_op_code() & 0x000F; // N
         // Clear flag register
         self.set_v_reg(0xF, 0);
 
-        // for r in 0..n
-        for row in 0..n
+        for row in 0..sprite_height
         { 
             let pixel_loc = usize::from(self.get_i() + row);
             let pixel = self.get_memory_at_address(pixel_loc);
@@ -175,11 +175,10 @@ impl Interpreter
                         self.set_v_reg(0xF, 1);
                     }
                     // XOR pixel value
-                    self.set_graphics_at_address(pixel_at_coords_loc, graphics_byte ^ 1);
+                    self.set_graphics_at_address(pixel_at_coords_loc, graphics_byte ^ 1);           
                 }
             }
         }
-        // render();
     }
 
     /// 0xFX07: set vx to current value of delay timer
