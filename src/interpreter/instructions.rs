@@ -9,7 +9,7 @@ impl Interpreter
         self.set_draw_flag(true);
         for n in 0..2048
         {
-            self.set_graphics_at_address(n, 0);
+            self.set_px(n, 0);
         }
     }
 
@@ -160,7 +160,7 @@ impl Interpreter
         for row in 0..sprite_height
         { 
             let pixel_loc = usize::from(self.get_i() + row);
-            let pixel = self.get_memory_at_address(pixel_loc);
+            let pixel = self.get_px(pixel_loc);
 
             for bit_offset in 0..8
             {
@@ -169,13 +169,13 @@ impl Interpreter
                 {
                     // Check if pixel(x,y) is on
                     let pixel_at_coords_loc = usize::from(x + bit_offset + ((y + row) * 64));
-                    let graphics_byte = self.get_graphics_at_address(pixel_at_coords_loc);
+                    let graphics_byte = self.get_px(pixel_at_coords_loc);
                     if graphics_byte == 1
                     {
                         self.set_v_reg(0xF, 1);
                     }
                     // XOR pixel value
-                    self.set_graphics_at_address(pixel_at_coords_loc, graphics_byte ^ 1);           
+                    self.set_px(pixel_at_coords_loc, graphics_byte ^ 1);
                 }
             }
         }

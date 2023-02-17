@@ -5,7 +5,7 @@ pub struct Interpreter
     i: Option<u16>,
     v: Option<[u8; 16]>,
     memory: Option<[u8; 4096]>,
-    graphics: Option<[u8; 2048]>,
+    pixels: [u8; 2048],
     pc: Option<u16>,
     delay_timer: Option<u8>,
     sound_timer: Option<u8>,
@@ -27,7 +27,7 @@ impl Interpreter
             i: Some(0x0000),
             v: Some([0; 16]),
             memory: Some([0; 4096]),
-            graphics: Some([0; 2048]),
+            pixels: [0; 2048],
             // Program counter
             pc: Some(0x0200),
             delay_timer: Some(0x3c), // 60
@@ -45,7 +45,7 @@ impl Interpreter
 }
 
 mod cycle;
-mod display;
+mod graphics;
 mod instructions;
 mod setup;
 mod state;

@@ -129,18 +129,18 @@ impl Interpreter
         }
     }
 
-    pub fn get_graphics_at_address(&self, index: usize) -> u8
-    {
-        self.graphics.unwrap()[index]
-    }
+    // pub fn get_graphics_at_address(&self, index: usize) -> u8
+    // {
+    //     self.graphics.unwrap()[index]
+    // }
 
-    pub fn set_graphics_at_address(&mut self, index: usize, value: u8)
-    {
-        // We need to actually retrieve a reference to the struct field
-        if let Some(ref mut gfx) = self.graphics {
-            gfx[index] = value;
-        }
-    }
+    // pub fn set_graphics_at_address(&mut self, index: usize, value: u8)
+    // {
+    //     // We need to actually retrieve a reference to the struct field
+    //     if let Some(ref mut gfx) = self.graphics {
+    //         gfx[index] = value;
+    //     }
+    // }
     ///
     /// Program counter
     ///
