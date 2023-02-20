@@ -14,15 +14,14 @@ impl Interpreter
     ///
     pub fn push_stack(&mut self, value: u16)
     {
-        self.inc_sp();
         self.stack[self.sp] = value;
+        self.inc_sp();
     }
 
     pub fn pop_stack(&mut self) -> u16
     {
-        let value = self.peek_stack();
         self.dec_sp();
-        value
+        self.peek_stack()
     }
 
     fn peek_stack(&mut self) -> u16
@@ -42,20 +41,16 @@ impl Interpreter
 
     pub fn next_instruction(&mut self)
     {
-        if let skip_inc = self.skip_inc
+        if self.skip_inc == false
         {
-            if skip_inc == false
-            {
-                self.debug_log(format!("PC: {:#06x} -> {:#06x}", self.pc, self.pc + 2));
-                self.pc += 2;
-            }
-            else
-            {
-                self.skip_inc = false;
-                self.debug_log(format!("PC: {:#06x}", self.pc));
-            }
+            self.debug_log(format!("PC: {:#06x} -> {:#06x}", self.pc, self.pc + 2));
+            self.pc += 2;
         }
-        
+        else
+        {
+            self.skip_inc = false;
+            self.debug_log(format!("PC: {:#06x}", self.pc));
+        }        
     }
     ///
     /// Timers

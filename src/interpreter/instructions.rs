@@ -8,14 +8,7 @@ impl Interpreter
     {
         self.debug_log(format!("CALL:   clear_display"));
         self.draw_flag = true;
-        for row in 0..HEIGHT
-        {
-            for col in 0..WIDTH
-            {
-                self.pixels[row][col] = 0;
-            }
-            
-        }
+        self.pixels = [[0; WIDTH]; HEIGHT];
     }
 
     /// 0x00EE: return from subroutine
@@ -33,12 +26,8 @@ impl Interpreter
         let address = self.op_code & 0x0FFF;
         // NOT working since PC gets incremented after jump
         self.debug_log(format!("Setting program counter to {:#06x}", address));
-        if address == self.pc
-        {
-            self.debug_log(format!("Infinite jump"))
-        }
         self.pc = address;
-        self.skip_inc = true;
+        // self.skip_inc = true;
     }
 
     /// 0x2NNN: execute subroutine at address NNN
@@ -102,7 +91,7 @@ impl Interpreter
     {
         self.debug_log(format!("CALL:   add_vx_reg"));
         let x = ((self.op_code & 0x0F00) >> 8) as usize;
-        let nn: u8 = (self.op_code & 0x00FF).try_into().unwrap();
+        let nn = (self.op_code & 0x00FF) as u8;
 
         self.v[x] += nn;
     }
@@ -134,21 +123,21 @@ impl Interpreter
     {
         let x = ((self.op_code & 0x0F00) >> 8) as usize;
         let y = ((self.op_code & 0x00F0) >> 4) as usize;
-        self.v[x]&= self.v[y];
+        self.v[x] ^= self.v[y];
     }
     /// 0x8XY4: VX += VY
     pub fn set_vx_addeq_vy(&mut self)
     {
         let x = ((self.op_code & 0x0F00) >> 8) as usize;
         let y = ((self.op_code & 0x00F0) >> 4) as usize;
-        self.v[x]&= self.v[y];
+        self.v[x] += self.v[y];
     }
     /// 0x8XY5: VX -= VY
     pub fn set_vx_subeq_vy(&mut self)
     {
         let x = ((self.op_code & 0x0F00) >> 8) as usize;
         let y = ((self.op_code & 0x00F0) >> 4) as usize;
-        self.v[x]&= self.v[y];
+        self.v[x] -= self.v[y];
     }
     /// 0x8XY6: VX >>= VY
     pub fn set_vx_rshift_vy(&mut self)
@@ -162,7 +151,7 @@ impl Interpreter
     {
         let x = ((self.op_code & 0x0F00) >> 8) as usize;
         let y = ((self.op_code & 0x00F0) >> 4) as usize;
-        self.v[x] >>= self.v[y];
+        self.v[x] = self.v[y] - self.v[x];
     }
     /// 0x8XYE: VX <<= VY
     pub fn set_vx_lshift_vy(&mut self)
@@ -189,7 +178,6 @@ impl Interpreter
     {
         self.debug_log(format!("CALL:   set_idx_reg"));
         self.i = self.op_code & 0x0FFF;
-        self.next_instruction();
     }
 
     /// 0xDXYN: draw n rows at coordinates in vx/vy
@@ -204,11 +192,9 @@ impl Interpreter
         for byte in 0..n
         {
             let row = (self.v[y] as usize + byte) % HEIGHT;
-
             for bit in 0..8
             {
                 let col = (self.v[x] as usize + bit) % WIDTH;
-
                 let color = (self.memory[self.i as usize + byte] >> (7 - bit)) & 1;
                 self.v[0x0F] |= color & self.pixels[row][col];
                 self.pixels[row][col] ^= color;

@@ -1,34 +1,8 @@
-use super::{Interpreter, graphics::{HEIGHT, WIDTH}};
+use super::{Interpreter};
 // use std::{thread, time};
 
 impl Interpreter
 {
-    // pub fn start(&mut self)
-    // {
-    //     if self.started
-    //     {
-    //         return;
-    //     }
-    //     self.started = true;
-    //     self.run();
-    // }
-    // pub fn run(&mut self)
-    // {
-    //     let refresh_millis = if self.is_debug() { 100 } else { 16 };
-    //     let refresh_interval = time::Duration::from_millis(refresh_millis);
-
-    //     loop
-    //     {
-    //         self.fetch();
-    //         self.decode_and_execute();
-    //         self.dec_delay_timer();
-    //         self.dec_sound_timer();
-    //         // self.render();
-    //         self.set_draw_flag(false);
-    //         thread::sleep(refresh_interval);
-    //     }
-    // }
-
     pub fn fetch(&mut self)
     {
         // https://stackoverflow.com/a/50244328
@@ -81,21 +55,21 @@ impl Interpreter
                 {
                     // 0x8XY0
                     0x0000 => self.set_vx_to_vy(),
-                    // 0x8XY0
+                    // 0x8XY1
                     0x0001 => self.set_vx_oreq_vy(),
-                    // 0x8XY0
-                    0x0002 => self.set_vx_oreq_vy(),
-                    // 0x8XY0
+                    // 0x8XY2
+                    0x0002 => self.set_vx_andeq_vy(),
+                    // 0x8XY3
                     0x0003 => self.set_vx_xoreq_vy(),
-                    // 0x8XY0
+                    // 0x8XY4
                     0x0004 => self.set_vx_addeq_vy(),
-                    // 0x8XY0
+                    // 0x8XY5
                     0x0005 => self.set_vx_subeq_vy(),
-                    // 0x8XY0
+                    // 0x8XY6
                     0x0006 => self.set_vx_rshift_vy(),
-                    // 0x8XY0
+                    // 0x8XY7
                     0x0007 => self.set_vx_eq_vy_sub_vx(),
-                    // 0x8XY0
+                    // 0x8XYE
                     0x000E => self.set_vx_lshift_vy(),
                     
                     _ => self.unknown_op_code(),
