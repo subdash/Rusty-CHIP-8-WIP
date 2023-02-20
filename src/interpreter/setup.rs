@@ -15,7 +15,7 @@ impl Interpreter
         // Store sprites 0x00..0x50
         for n in 0..80
         {
-            self.set_memory_address(n, SPRITES[n]);
+            self.memory[n] = SPRITES[n];
         }
     }
     
@@ -24,16 +24,13 @@ impl Interpreter
         /*
             TODO: read file name from cmd line args, use that value here
         */
-        let byte_vec = get_file_as_byte_vec("src/bc_test.ch8");
+        let byte_vec = get_file_as_byte_vec("src/IBM Logo.ch8");
         let vec_len = byte_vec.len();
-    
+
         for n in 0..vec_len
         {
-            self.set_memory_address(0x200 + n, byte_vec[n]);
-            let mem_val = self.get_memory_at_address(0x200 + n);
-            self.debug_log(format!("value/address: {:#06x}/{:#06x}", mem_val, 0x200 + n));
+            self.memory[0x200 + n] = byte_vec[n];
         }
-        // self.debug_log(format!("MEMORY: {:?}", self.memory));
     }
 }
 
