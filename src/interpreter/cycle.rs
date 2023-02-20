@@ -5,14 +5,10 @@ impl Interpreter
 {
     pub fn fetch(&mut self)
     {
-        // https://stackoverflow.com/a/50244328
-        // Take bits of mem[pc], shift left by one byte, take bytes
-        // of mem[pc+1] and OR them into 8 bits on right side
-        let pc = usize::from(self.pc);
-        let opcode_first_half = self.memory[pc];
-        let opcode_second_half = self.memory[pc + 1];
-        let op_code = (opcode_first_half as u16) << 8 | opcode_second_half as u16;
-        self.op_code = op_code;
+        // let pc = usize::from(self.pc);
+        let opcode_first_half = self.memory[self.pc as usize] as u16;
+        let opcode_second_half = self.memory[self.pc as usize + 1] as u16;
+        self.op_code = (opcode_first_half) << 8 | opcode_second_half;
         self.next_instruction();
         self.log_globals();
     }
@@ -71,7 +67,6 @@ impl Interpreter
                     0x0007 => self.set_vx_eq_vy_sub_vx(),
                     // 0x8XYE
                     0x000E => self.set_vx_lshift_vy(),
-                    
                     _ => self.unknown_op_code(),
                 }
             }
