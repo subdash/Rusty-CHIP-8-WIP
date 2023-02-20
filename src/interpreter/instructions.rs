@@ -195,41 +195,25 @@ impl Interpreter
     /// 0xDXYN: draw n rows at coordinates in vx/vy
     pub fn draw_instruction(&mut self)
     {
-        // self.debug_log(format!("draw_instruction called"));
-        // self.set_draw_flag(true);
-        // let x_reg: usize = ((self.op_code & 0x0F00) >> 8).try_into().unwrap();
-        // let y_reg: usize = ((self.op_code & 0x00F0) >> 4).try_into().unwrap();
-        // // Set x and y coordinates to values in VX/VY
-        // let x: u16 = (self.get_v_reg(x_reg) & 63).try_into().unwrap();
-        // let y: u16 = (self.get_v_reg(y_reg) & 31).try_into().unwrap();
-        // // Sprite height (n rows to draw)
-        // let sprite_height = self.op_code & 0x000F; // N
-        // // Clear flag register
-        // self.set_v_reg(0xF, 0);
+        self.draw_flag = true;
+        let x = ((self.op_code & 0x0F00) >> 8) as usize;
+        let y = ((self.op_code & 0x00F0) >> 4) as usize;
+        let n = (self.op_code & 0x000F) as usize;
+        self.v[0xF] = 0;
 
-        // for row in 0..sprite_height
-        // { 
-        //     let pixel_loc = usize::from(self.get_i() + row);
-        //     let pixel = self.get_px(pixel_loc);
+        for byte in 0..n
+        {
+            let row = (self.v[y] as usize + byte) % HEIGHT;
 
-        //     for bit_offset in 0..8
-        //     {
-        //         // Check if current pixel is on
-        //         if (pixel & (0x80 >> row)) != 0
-        //         {
-        //             // Check if pixel(x,y) is on
-        //             let pixel_at_coords_loc = usize::from(x + bit_offset + ((y + row) * 64));
-        //             let graphics_byte = self.get_px(pixel_at_coords_loc);
-        //             if graphics_byte == 1
-        //             {
-        //                 self.set_v_reg(0xF, 1);
-        //             }
-        //             // XOR pixel value
-        //             self.set_px(pixel_at_coords_loc, graphics_byte ^ 1);
-        //         }
-        //     }
-        // }
-        // self.debug_log(format!("{:?}", self.pixels));
+            for bit in 0..8
+            {
+                let col = (self.v[x] as usize + bit) % WIDTH;
+
+                let color = (self.memory[self.i as usize + byte] >> (7 - bit)) & 1;
+                self.v[0x0F] |= color & self.pixels[row][col];
+                self.pixels[row][col] ^= color;
+            }
+        }
     }
 
     /// 0xFX07: set vx to current value of delay timer

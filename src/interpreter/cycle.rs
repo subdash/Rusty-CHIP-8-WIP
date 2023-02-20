@@ -106,36 +106,7 @@ impl Interpreter
             // 0xANNN: Set I to NNN
             0xA000 => self.set_idx_reg(),
             // 0xDXYN: Draw
-            // 0xD000 => self.draw_instruction(),
-            0xD000 =>
-            {
-                self.draw_flag = true;
-                let x = ((self.op_code & 0x0F00) >> 8) as usize;
-                let y = ((self.op_code & 0x00F0) >> 4) as usize;
-                // // Set x and y coordinates to values in VX/VY
-                // let x = (self.v[x] & 63) as u16;
-                // let y = (self.v[y] & 31) as u16;
-                // // Sprite height (n rows to draw)
-                let n = (self.op_code & 0x000F) as usize;
-                // Clear flag register
-                self.v[0xF] = 0;
-        
-                for byte in 0..n
-                {
-                    // let pixel_loc = usize::from(self.i + byte);
-                    // let pixel = self.get_px(pixel_loc);
-                    let row = (self.v[y] as usize + byte) % HEIGHT;
-        
-                    for bit in 0..8
-                    {
-                        let col = (self.v[x] as usize + bit) % WIDTH;
-
-                        let color = (self.memory[self.i as usize + byte] >> (7 - bit)) & 1;
-                        self.v[0x0F] |= color & self.pixels[row][col];
-                        self.pixels[row][col] ^= color;
-                    }
-                }
-            }
+            0xD000 => self.draw_instruction(),
             0xF000 =>
             {
                 // Last 8 bits
