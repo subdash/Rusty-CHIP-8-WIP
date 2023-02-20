@@ -1,19 +1,21 @@
+use self::graphics::{ HEIGHT, WIDTH };
+
 pub struct Interpreter
 {
-    stack: Option<[u16; 16]>,
-    sp: Option<usize>,
-    i: Option<u16>,
-    v: Option<[u8; 16]>,
-    memory: Option<[u8; 4096]>,
-    pixels: [u8; 2048],
-    pc: Option<u16>,
-    delay_timer: Option<u8>,
-    sound_timer: Option<u8>,
-    op_code: Option<u16>,
-    keypad: Option<[bool; 16]>,
-    debug: Option<bool>,
-    skip_inc: Option<bool>,
-    draw_flag: Option<bool>
+    stack: [u16; 16],
+    sp: usize,
+    i: u16,
+    v: [u8; 16],
+    memory: [u8; 4096],
+    pixels: [[u8; WIDTH]; HEIGHT],
+    pc: u16,
+    delay_timer: u8,
+    sound_timer: u8,
+    op_code: u16,
+    keypad: [bool; 16],
+    debug: bool,
+    skip_inc: bool,
+    draw_flag: bool,
 }
 
 impl Interpreter
@@ -22,24 +24,24 @@ impl Interpreter
     {
         Interpreter
         {
-            stack: Some([0; 16]),
-            sp: Some(0x0000),
-            i: Some(0x0000),
-            v: Some([0; 16]),
-            memory: Some([0; 4096]),
-            pixels: [0; 2048],
+            stack: [0; 16],
+            sp: 0x0000,
+            i: 0x0000,
+            v: [0; 16],
+            memory: [0; 4096],
+            pixels: [[0; WIDTH]; HEIGHT],
             // Program counter
-            pc: Some(0x0200),
-            delay_timer: Some(0x3c), // 60
-            sound_timer: Some(0x3c), // 60
-            op_code: Some(0x0000),
-            keypad: Some([false; 16]),
+            pc: 0x0200,
+            delay_timer: 0x3c, // 0
+            sound_timer: 0x3c, // 0
+            op_code: 0x0000,
+            keypad: [false; 16],
             /*
                 TODO: read debug flag from cmd line args, use that value here
             */
-            debug: Some(false), // set to true when debugging
-            skip_inc: Some(false),
-            draw_flag: Some(false),
+            debug: false, // set to true when debugging
+            skip_inc: false,
+            draw_flag: false,
         }
     }
 }

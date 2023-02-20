@@ -7,22 +7,9 @@ use cursive::XY;
 
 use super::Interpreter;
 
-const WIDTH: usize = 64;
-const HEIGHT: usize = 32;
-const TOTAL_SIZE: usize = WIDTH * HEIGHT;
-
-impl Interpreter
-{
-    pub fn get_px(&self, index: usize) -> u8
-    {
-        self.pixels[index]
-    }
-
-    pub fn set_px(&mut self, index: usize, value: u8)
-    {
-        self.pixels[index] = value;
-    }
-}
+pub const WIDTH: usize = 64;
+pub const HEIGHT: usize = 32;
+// pub const TOTAL_SIZE: usize = WIDTH * HEIGHT;
 
 impl cursive::view::View for Interpreter
 {
@@ -33,16 +20,18 @@ impl cursive::view::View for Interpreter
         let white_style: ColorStyle = ColorStyle::new(white, white);
         let black_style: ColorStyle = ColorStyle::new(black, black);    
 
-        for y in 0..HEIGHT
+        for row in 0..HEIGHT
         {
-            for x in 0..WIDTH
+            for col in 0..WIDTH
             {
-                let cell = self.get_px((y * HEIGHT) + x);
+                let cell = self.pixels[row][col];
                 let style = if cell == 0 { white_style } else { black_style };
 
+                // println!("({}, {}) - px {}: {}", x, y, (y * HEIGHT) + x, cell);
+
                 p.with_color(style, |printer| {
-                    printer.print((x, y), " ");
-                });                
+                    printer.print((col, row), " ");
+                });
             }
         }
     }
@@ -52,19 +41,12 @@ impl cursive::view::View for Interpreter
         match event
         {
             Event::Refresh =>
-            {                
-                // for n in 0..4096
-                // {
-                //     // let curr = self.memory[n];
-                //     if curr == 0
-                //     {
-                //         self.set(n, 1);
-                //     }
-                //     else
-                //     {
-                //         self.set(n, 0);
-                //     }
-                // }
+            {
+                self.fetch();
+                self.decode_and_execute();
+                self.dec_delay_timer();
+                self.dec_sound_timer();
+                self.draw_flag =false;
             
                 EventResult::Consumed(None)
             }
@@ -72,5 +54,5 @@ impl cursive::view::View for Interpreter
         }
     }
 
-    fn required_size(&mut self, _: Vec2) -> Vec2 { XY { x: 48, y: 32 } }
+    fn required_size(&mut self, _: Vec2) -> Vec2 { XY { x: WIDTH, y: HEIGHT } }
 }
