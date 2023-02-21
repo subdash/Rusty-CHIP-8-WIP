@@ -16,6 +16,12 @@ pub struct Interpreter
     debug: bool,
     skip_inc: bool,
     draw_flag: bool,
+    // TODO: store these in a structure
+    x: usize,
+    y: usize,
+    n: u8,
+    nn: u8,
+    nnn: u16
 }
 
 impl Interpreter
@@ -42,6 +48,11 @@ impl Interpreter
             debug: true, // set to true when debugging
             skip_inc: false,
             draw_flag: false,
+            x: 0,
+            y: 0,
+            n: 0,
+            nn: 0,
+            nnn: 0
         }
     }
 }

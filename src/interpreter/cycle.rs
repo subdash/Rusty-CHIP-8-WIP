@@ -1,7 +1,5 @@
 use super::{Interpreter};
-// use std::{thread, time};
 
-#[derive(Debug)]
 struct Nibbles(u8, u8, u8, u8);
 impl Nibbles
 {
@@ -31,7 +29,11 @@ impl Interpreter
     {
         // First 4 bits
         let as_components = Nibbles::new(self.op_code);
-        println!("as_components: {:?}", as_components);
+        self.x = ((self.op_code & 0x0F00) >> 8) as usize;
+        self.y = ((self.op_code & 0x00F0) >> 4) as usize;
+        self.n = (self.op_code & 0x000F) as u8;
+        self.nn = (self.op_code & 0x00FF) as u8;
+        self.nnn = self.op_code & 0x0FFF;
         // match self.op_code & 0xF000
         match as_components
         {
@@ -40,8 +42,8 @@ impl Interpreter
             Nibbles(0x1, _, _, _) => self.jump(),
             Nibbles(0x2, _, _, _) => self.call_subroutine(),
             Nibbles(0x3, _, _, _) => self.skip_if_vx_eq_nn(),
-            Nibbles(0x4, _, _, 0x0) => self.skip_if_vx_eq_vy(),
             Nibbles(0x4, _, _, _) => self.skip_if_vx_neq_nn(),            
+            Nibbles(0x5, _, _, 0) => self.skip_if_vx_eq_vy(),
             Nibbles(0x6, _, _, _) => self.set_vx_reg(),
             Nibbles(0x7, _, _, _) => self.add_vx_reg(),
             Nibbles(0x8, _, _, 0x0) => self.set_vx_to_vy(),
