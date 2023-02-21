@@ -39,7 +39,7 @@ impl Interpreter
             /*
                 TODO: read debug flag from cmd line args, use that value here
             */
-            debug: false, // set to true when debugging
+            debug: true, // set to true when debugging
             skip_inc: false,
             draw_flag: false,
         }
