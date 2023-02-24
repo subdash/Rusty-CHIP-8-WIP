@@ -1,3 +1,6 @@
 /target
 *.ch8
+TODO
+.vscode/
+out
 
