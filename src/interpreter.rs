@@ -8,7 +8,7 @@ pub struct Interpreter
     v: [u8; 16],
     memory: [u8; 4096],
     pixels: [[u8; WIDTH]; HEIGHT],
-    pc: u16,
+    pc: usize,
     delay_timer: u8,
     sound_timer: u8,
     op_code: u16,

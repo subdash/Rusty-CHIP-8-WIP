@@ -25,8 +25,9 @@ impl Interpreter
             TODO: read file name from cmd line args, use that value here
         */
         let byte_vec = get_file_as_byte_vec(
+            "src/Sierpinski [Sergey Naydenov, 2010].ch8"
             // "src/Stars [Sergey Naydenov, 2010].ch8"
-            "src/IBM Logo.ch8"
+            // "src/IBM Logo.ch8"
         );
         let vec_len = byte_vec.len();
 

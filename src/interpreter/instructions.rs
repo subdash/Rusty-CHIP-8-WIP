@@ -3,6 +3,11 @@ use super::{Interpreter, graphics::WIDTH, graphics::HEIGHT};
 
 impl Interpreter
 {
+    fn jump_to(&mut self, address: usize)
+    {
+        self.pc = address;
+        self.skip_inc = true;
+    }
     /// 0x00E0 - clear screen
     pub fn clear_display(&mut self)
     {
@@ -16,27 +21,25 @@ impl Interpreter
     {
         self.debug_log(format!("CALL:   return_from_subroutine"));
         let ret_value = self.pop_stack();
-        self.pc = ret_value;
+        self.debug_log(format!("Setting program counter to {:#06x}", ret_value));
+        self.jump_to(usize::from(ret_value));
     }
 
     /// 0x1NNN: jump to regiister NNN
     pub fn jump(&mut self)
     {
         self.debug_log(format!("CALL:   jump"));
-        let address = self.op_code & 0x0FFF;
-        // NOT working since PC gets incremented after jump
-        self.debug_log(format!("Setting program counter to {:#06x}", address));
-        self.pc = address;
-        // self.skip_inc = true;
+        self.debug_log(format!("Setting program counter to {:#06x}", self.nnn));
+        self.jump_to(usize::from(self.nnn));
     }
 
     /// 0x2NNN: execute subroutine at address NNN
     pub fn call_subroutine(&mut self)
     {
         self.debug_log(format!("CALL:   call_subroutine"));
-
-        self.push_stack(self.pc);
-        self.pc = self.nnn;
+        self.debug_log(format!("Setting program counter to {:#06x}", self.nnn));
+        self.push_stack(self.pc as u16);
+        self.jump_to(usize::from(self.nnn));
     }
 
     /// 0x3XNN: skip if VX equals NN
@@ -73,7 +76,9 @@ impl Interpreter
     pub fn set_vx_reg(&mut self)
     {
         self.debug_log(format!("CALL:   set_vx_reg"));
+        self.debug_log(format!("setting v[{:#04x}] to {:#04x}", self.x, self.nn));
         self.v[self.x] = self.nn;
+        assert_eq!(self.v[self.x], self.nn);
     }
 
     /// 0x7XNN: add NN to VX
@@ -153,6 +158,13 @@ impl Interpreter
     {
         self.debug_log(format!("CALL:   set_idx_reg"));
         self.i = self.nnn;
+    }
+
+    /// 0xBNNN: PC = V[0] + nnn
+    pub fn set_pc_to_v0_plus_nnn(&mut self)
+    {
+        self.debug_log(format!("CALL:   set_idx_reg"));
+        self.pc = usize::from(self.v[0x0 as usize] as u16 + self.nnn);
     }
 
     /// 0xCXNN: V[x] = rand() & nn
