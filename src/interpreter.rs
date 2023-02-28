@@ -1,4 +1,6 @@
-use self::graphics::{ HEIGHT, WIDTH };
+use device_query::DeviceState;
+
+use self::{graphics::{ HEIGHT, WIDTH }, keyboard::Keyboard};
 
 pub struct Interpreter
 {
@@ -12,7 +14,8 @@ pub struct Interpreter
     delay_timer: u8,
     sound_timer: u8,
     op_code: u16,
-    keypad: [bool; 16],
+    keypad: Option<Keyboard>,
+    device_state: Option<DeviceState>,
     debug: bool,
     skip_inc: bool,
     draw_flag: bool,
@@ -21,7 +24,7 @@ pub struct Interpreter
     y: usize,
     n: u8,
     nn: u8,
-    nnn: u16
+    nnn: u16,
 }
 
 impl Interpreter
@@ -41,24 +44,26 @@ impl Interpreter
             delay_timer: 0x3c, // 0
             sound_timer: 0x3c, // 0
             op_code: 0x0000,
-            keypad: [false; 16],
+            keypad: None,
+            device_state: None,
             /*
                 TODO: read debug flag from cmd line args, use that value here
             */
             debug: true, // set to true when debugging
             skip_inc: false,
-            draw_flag: false,
+            draw_flag: true,
             x: 0,
             y: 0,
             n: 0,
             nn: 0,
-            nnn: 0
+            nnn: 0,
         }
     }
 }
 
 mod cycle;
 mod graphics;
+mod keyboard;
 mod instructions;
 mod setup;
 mod state;

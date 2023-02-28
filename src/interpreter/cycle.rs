@@ -17,7 +17,7 @@ impl Interpreter
 {
     pub fn fetch(&mut self)
     {
-        // let pc = usize::from(self.pc);
+        self.keypad.as_mut().unwrap().query_keystate(&self.device_state.as_mut().unwrap());
         let opcode_first_half = self.memory[self.pc] as u16;
         let opcode_second_half = self.memory[self.pc + 1] as u16;
         self.op_code = (opcode_first_half) << 8 | opcode_second_half;
@@ -60,8 +60,10 @@ impl Interpreter
             Nibbles(0xB, _, _, _)       => self.set_pc_to_v0_plus_nnn(),
             Nibbles(0xC, _, _, _)       => self.rand(),
             Nibbles(0xD, _, _, _)       => self.draw_instruction(),
+            Nibbles(0xE, _, 0x9, 0xE)   => self.skip_if_key_pressed(),
+            Nibbles(0xE, _, 0xA, 0x1)   => self.skip_if_key_not_pressed(),
             Nibbles(0xF, _, 0x0, 0x7)   => self.set_vx_to_delay(),
-            Nibbles(0xF, _, 0x0, 0xA)   => self.get_key(),
+            Nibbles(0xF, _, 0x0, 0xA)   => self.wait_for_keypress(),
             Nibbles(0xF, _, 0x1, 0x5)   => self.set_delay_to_vx(),
             Nibbles(0xF, _, 0x1, 0x8)   => self.set_sound_to_vx(),
             Nibbles(0xF, _, 0x1, 0xE)   => self.add_vx_to_i(),

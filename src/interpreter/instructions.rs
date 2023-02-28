@@ -25,7 +25,7 @@ impl Interpreter
         self.jump_to(usize::from(ret_value));
     }
 
-    /// 0x1NNN: jump to regiister NNN
+    /// 0x1NNN: jump to NNN
     pub fn jump(&mut self)
     {
         self.debug_log(format!("CALL:   jump"));
@@ -85,7 +85,7 @@ impl Interpreter
     pub fn add_vx_reg(&mut self)
     {
         self.debug_log(format!("CALL:   add_vx_reg"));
-        self.v[self.x] += self.nn;
+        self.v[self.x] = self.v[self.x].wrapping_add(self.nn);
     }
 
     /// 0x8XY0: VX = VY
@@ -196,6 +196,44 @@ impl Interpreter
         }
     }
 
+    /// 0xEX9E: skip if key in vx is pressed
+    pub fn skip_if_key_pressed(&mut self)
+    {
+        self.debug_log(format!("CALL:   skip_if_key_pressed"));
+        if self.keypad.as_mut().unwrap().keys[self.v[self.x] as usize] == 1
+        {
+            self.next_instruction();
+        }
+    }
+    /// 0xEXA1: skip if key in vx is not pressed
+    pub fn skip_if_key_not_pressed(&mut self)
+    {
+        self.debug_log(format!("CALL:   skip_if_key_not_pressed"));
+        if self.keypad.as_mut().unwrap().keys[self.v[self.x] as usize] == 0
+        {
+            self.next_instruction();
+        }
+    }
+
+    /// 0xFX0A: wait for keypress and store in vx
+    pub fn wait_for_keypress(&mut self)
+    {
+        self.debug_log(format!("CALL:   wait_for_keypress"));
+        let mut key_pressed = false;
+        for (i, key) in self.keypad.as_mut().unwrap().keys.iter().enumerate()
+        {
+            if *key == 1
+            {
+                self.v[self.x] = i as u8;
+                key_pressed = true;
+            }
+        }
+        if !key_pressed
+        {
+            self.pc -= 2;
+        }
+    }
+
     /// 0xFX07: set vx to current value of delay timer
     pub fn set_vx_to_delay(&mut self)
     {
@@ -222,20 +260,6 @@ impl Interpreter
     {
         self.debug_log(format!("CALL:   add_vx_to_i"));
         self.i += self.v[self.x] as u16;
-    }
-
-    /// 0xFX0A: stop executing instructions until key is pressed
-    pub fn get_key(&mut self)
-    {
-        self.debug_log(format!("CALL:   get_key"));
-        /*
-            - Decrement PC and don't increment again until key is pressed
-            - If key is pressed while waiting for input, its hex value will be
-              stored in VX and execution continues
-        */
-        // Use device query lib
-        // https://docs.rs/device_query/latest/device_query/
-        panic!("Unimplemented: get_key");
     }
 
     /// 0xFX29: set i to font character

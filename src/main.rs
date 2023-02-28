@@ -10,7 +10,7 @@ fn main()
 
     let mut siv = cursive::default();
     siv.set_fps(16);
-    siv.add_global_callback('q', |s| s.quit());
+    siv.add_global_callback('.', |s| s.quit());
 
     siv.add_layer(
         Dialog::new()

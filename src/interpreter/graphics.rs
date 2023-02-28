@@ -15,6 +15,11 @@ impl cursive::view::View for Interpreter
 {
     fn draw(&self, p: &Printer)
     {
+        if !self.draw_flag
+        {
+            return;
+        }
+
         let white: Color = Color::Rgb(0, 0, 0);
         let black: Color = Color::Rgb(255, 255, 255);
         let white_style: ColorStyle = ColorStyle::new(white, white);
@@ -46,7 +51,7 @@ impl cursive::view::View for Interpreter
                 self.decode_and_execute();
                 self.dec_delay_timer();
                 self.dec_sound_timer();
-                self.draw_flag =false;
+                // self.draw_flag =false;
             
                 EventResult::Consumed(None)
             }
