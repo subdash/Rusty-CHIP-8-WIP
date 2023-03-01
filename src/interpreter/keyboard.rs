@@ -22,16 +22,18 @@ static ALL_KEYS: [Keycode; 16] =
 
 pub struct Keyboard
 {
-    pub keys: [u8; 16]
+    pub keys: [u8; 16],
+    device_state: DeviceState
 }
 
 impl Keyboard
 {
-    pub const fn new() -> Self
+    pub const fn new(device_state: DeviceState) -> Self
     {
         Self
         {
-            keys: [0; 16]
+            keys: [0; 16],
+            device_state
         }
     }
 
@@ -75,9 +77,10 @@ impl Keyboard
         }
     }
 
-    pub fn query_keystate(&mut self, device_state: &DeviceState)
+    pub fn query_keystate(&mut self)
     {
-        let keys = device_state.get_keys();
+        let keys = self.device_state.get_keys();
+        println!("keys: {:?}", keys);
 
         for key in ALL_KEYS.iter()
         {

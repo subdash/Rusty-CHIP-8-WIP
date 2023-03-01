@@ -15,7 +15,6 @@ pub struct Interpreter
     sound_timer: u8,
     op_code: u16,
     keypad: Option<Keyboard>,
-    device_state: Option<DeviceState>,
     debug: bool,
     skip_inc: bool,
     draw_flag: bool,
@@ -45,7 +44,6 @@ impl Interpreter
             sound_timer: 0x3c, // 0
             op_code: 0x0000,
             keypad: None,
-            device_state: None,
             /*
                 TODO: read debug flag from cmd line args, use that value here
             */

@@ -12,8 +12,7 @@ impl Interpreter
     {
         self.load_sprites();
         self.load_program();
-        self.device_state = Some(DeviceState::new());
-        self.keypad = Some(Keyboard::new());
+        self.keypad = Some(Keyboard::new(DeviceState::new()));
     }
 
     fn load_sprites(&mut self)
@@ -32,8 +31,10 @@ impl Interpreter
         */
         let byte_vec = get_file_as_byte_vec(
             // "src/Sierpinski [Sergey Naydenov, 2010].ch8"
+            "src/chip8-test-suite.ch8"
             // "src/Stars [Sergey Naydenov, 2010].ch8"
-            "src/IBM Logo.ch8"
+            // "src/IBM Logo.ch8"
+            // "src/test_opcode.ch8"
             // "src/15 Puzzle [Roger Ivie] (alt).ch8"
         );
         let vec_len = byte_vec.len();

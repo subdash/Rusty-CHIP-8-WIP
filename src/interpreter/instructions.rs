@@ -129,7 +129,7 @@ impl Interpreter
     pub fn set_vx_rshift_vy(&mut self)
     {
         self.debug_log(format!("CALL:   set_vx_rshift_vy"));
-        self.v[self.x] >>= self.v[self.y];
+        self.v[self.x] = self.v[self.x].wrapping_shr(self.v[self.y] as u32);
     }
     /// 0x8XY7: VX = VY - VX
     pub fn set_vx_eq_vy_sub_vx(&mut self)
@@ -140,8 +140,8 @@ impl Interpreter
     /// 0x8XYE: VX <<= VY
     pub fn set_vx_lshift_vy(&mut self)
     {
-        self.debug_log(format!("CALL:   set_vx_eq_vy_sub_vx"));
-        self.v[self.x] <<= self.v[self.y];
+        self.debug_log(format!("CALL:   set_vx_lshift_vy"));
+        self.v[self.x] = self.v[self.x].wrapping_shl(self.v[self.y] as u32);
     }
     /// 0x9XY0: skip if VX does not equal VY
     pub fn skip_if_vx_neq_vy(&mut self)

@@ -17,7 +17,7 @@ impl Interpreter
 {
     pub fn fetch(&mut self)
     {
-        self.keypad.as_mut().unwrap().query_keystate(&self.device_state.as_mut().unwrap());
+        self.keypad.as_mut().unwrap().query_keystate();
         let opcode_first_half = self.memory[self.pc] as u16;
         let opcode_second_half = self.memory[self.pc + 1] as u16;
         self.op_code = (opcode_first_half) << 8 | opcode_second_half;
